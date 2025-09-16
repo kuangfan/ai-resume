@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -61,6 +62,9 @@ export default function DashboardPage() {
               <p className="text-blue-700">
                 欢迎回来，{session.user?.username || "用户"}！您已成功登录系统。
               </p>
+              <Link href="/articles" className="hover:text-blue-500">
+                文章管理
+              </Link>
             </div>
           </div>
         </div>
