@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body>
+      <body className="bg-gray-50 text-gray-800">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

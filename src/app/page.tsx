@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white overflow-hidden">
+      <div className="relative z-1 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 text-white overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-30 animate-float"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-30 animate-float animation-delay-3000"></div>

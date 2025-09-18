@@ -1,12 +1,16 @@
 "use client";
 
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import UserMenu from "./UserMenu";
 
 const Navbar = () => {
   const currentPath = usePathname();
-  console.log("currentPath", currentPath);
+  const { data: session, status } = useSession();
+  const username = session?.user.username || "";
+
   const links = [
     {
       name: "首页",
@@ -53,21 +57,24 @@ const Navbar = () => {
             </nav>
           </div>
           <div className="flex items-center">
-            <div className="hidden md:flex items-center space-x-3">
-              <Link
-                href="/login"
-                className="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors"
-              >
-                登录
-              </Link>
-              <Link
-                href="/register"
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
-              >
-                免费注册
-              </Link>
-            </div>
-          </div>
+            {status === "authenticated" ? (
+              <UserMenu username={username} logout={() => signOut()} />
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/login"
+                  className="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  登录
+                </Link>
+                <Link
+                  href="/register"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
+                >
+                  免费注册
+                </Link>
+              </div>
+            )}</div>
         </div>
       </div>
     </div>
