@@ -15,6 +15,20 @@ const degreeEnum = [
   "硕士",
   "博士",
 ];
+const industryEnum = [
+  "互联网",
+  "金融",
+  "教育",
+  "医疗",
+  "制造业",
+  "零售",
+  "房地产",
+  "物流",
+  "媒体",
+  "广告",
+  "政府/非营利组织",
+  "其他",
+];
 const educationSchema = z.object({
   school: z
     .string()
@@ -30,6 +44,26 @@ const educationSchema = z.object({
   startDate: z.string().min(1, "请选择开始时间"),
   endDate: z.string().min(1, "请选择结束时间"),
 });
+const workExperienceSchema = z.object({
+  company: z
+    .string()
+    .min(2, "公司名称至少需要2个字符")
+    .max(20, "公司名称不能超过20个字符"),
+  position: z
+    .string()
+    .min(2, "职位名称至少需要2个字符")
+    .max(10, "职位名称不能超过10个字符"),
+  industry: z.enum(industryEnum, {
+    message: "请选择所属行业",
+  }),
+  startDate: z.string().min(1, "请选择开始时间"),
+  endDate: z.string().min(1, "请选择结束时间"),
+  description: z
+    .string()
+    .min(10, "工作内容至少需要10个字符")
+    .max(500, "工作内容不能超过500个字符"),
+});
+
 const profileSchema = z.object({
   realName: z
     .string()
@@ -48,6 +82,7 @@ const profileSchema = z.object({
     .max(100, "工作年限不能大于100"),
   job: z.string().min(2, "岗位至少需要2个字符").max(10, "岗位不能超过10个字符"),
   educations: z.array(educationSchema).min(1, "请添加至少1条教育经历"),
+  workExperiences: z.array(workExperienceSchema).min(1, "请添加至少1条工作经历"),
 });
 type ProfileFormData = z.infer<typeof profileSchema>;
 
@@ -77,11 +112,30 @@ const Profile = () => {
           endDate: "",
         },
       ],
+      workExperiences: [
+        {
+          company: "",
+          position: "",
+          industry: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        },
+      ],
     },
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "educations",
+  });
+  
+  const { 
+    fields: workExperienceFields, 
+    append: appendWorkExperience, 
+    remove: removeWorkExperience 
+  } = useFieldArray({
+    control,
+    name: "workExperiences",
   });
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -356,6 +410,150 @@ const Profile = () => {
                 </div>
               ))}
             </div>
+            <h3 className="text-xl font-semibold mb-6 flex items-center">
+              <span className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mr-3">
+                <i className="fas fa-briefcase text-sm"></i>
+              </span>
+              工作经历
+              <button
+                type="button"
+                className="ml-auto text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center"
+                onClick={() =>
+                  appendWorkExperience({
+                    company: "",
+                    position: "",
+                    industry: "",
+                    startDate: "",
+                    endDate: "",
+                    description: "",
+                  })
+                }
+              >
+                <i className="fas fa-plus mr-1"></i> 添加经历
+              </button>
+            </h3>
+            <div className="space-y-6">
+              {workExperienceFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 relative"
+                >
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      公司名称
+                    </label>
+                    <input
+                      {...register(`workExperiences.${index}.company`)}
+                      type="text"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                      placeholder="请输入公司名称"
+                    />
+                    {errors.workExperiences?.[index]?.company && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.workExperiences?.[index]?.company?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      职位名称
+                    </label>
+                    <input
+                      {...register(`workExperiences.${index}.position`)}
+                      type="text"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                      placeholder="请输入职位名称"
+                    />
+                    {errors.workExperiences?.[index]?.position && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.workExperiences?.[index]?.position?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      所属行业
+                    </label>
+                    <select
+                      {...register(`workExperiences.${index}.industry`)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                    >
+                      <option value="">请选择</option>
+                      {industryEnum.map((item) => (
+                        <option key={item} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.workExperiences?.[index]?.industry && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.workExperiences?.[index]?.industry?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      时间段
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        {...register(`workExperiences.${index}.startDate`)}
+                        type="month"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                      />
+                      <span className="text-gray-500">至</span>
+                      <input
+                        {...register(`workExperiences.${index}.endDate`)}
+                        type="month"
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                      />
+                    </div>
+                    {(errors.workExperiences?.[index]?.startDate ||
+                      errors.workExperiences?.[index]?.endDate) && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.workExperiences?.[index]?.startDate?.message ||
+                          errors.workExperiences?.[index]?.endDate?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="md:col-span-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      工作内容
+                    </label>
+                    <textarea
+                      {...register(`workExperiences.${index}.description`)}
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                      placeholder="请详细描述您的工作内容、职责和成就（至少10个字符）"
+                    />
+                    {errors.workExperiences?.[index]?.description && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.workExperiences?.[index]?.description?.message}
+                      </p>
+                    )}
+                  </div>
+                  {workExperienceFields.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeWorkExperience(index)}
+                      className="absolute top-0 right-0 text-red-500 hover:text-red-700 flex items-center text-sm font-medium focus:outline-none"
+                    >
+                      <i className="fas fa-trash-alt mr-1"></i>
+                      删除
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            
             <button
               type="submit"
               disabled={isLoading}
