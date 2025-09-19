@@ -14,7 +14,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Article Article[]
+  Article     Article[]
+  UserProfile UserProfile?
 }
 
 model Article {
@@ -28,4 +29,54 @@ model Article {
   updatedAt DateTime @updatedAt
   
   @@index([userId])
+}
+
+model UserProfile {
+  id          String @id @default(uuid())
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  realName    String @db.VarChar(4)
+  gender      String @db.VarChar(1)
+  phone       String @db.VarChar(11)
+  email       String @unique
+  workYears   Int
+  job         String @db.VarChar(10)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  Education       Education[]
+  WorkExperience  WorkExperience[]
+  
+  @@index([userId])
+}
+
+model Education {
+  id          String @id @default(uuid())
+  userProfileId String
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  school       String @db.VarChar(10)
+  major        String @db.VarChar(10)
+  degree       String @db.VarChar(10)
+  startDate    String @db.VarChar(7) // YYYY-MM format
+  endDate      String @db.VarChar(7) // YYYY-MM format
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@index([userProfileId])
+}
+
+model WorkExperience {
+  id          String @id @default(uuid())
+  userProfileId String
+  userProfile   UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  company      String @db.VarChar(20)
+  position     String @db.VarChar(10)
+  industry     String @db.VarChar(20)
+  startDate    String @db.VarChar(7) // YYYY-MM format
+  endDate      String @db.VarChar(7) // YYYY-MM format
+  description  String @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@index([userProfileId])
 }

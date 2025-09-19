@@ -1,99 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { profileSchema, ProfileFormData, degreeEnum, industryEnum } from "@/schema/profile";
 import Navbar from "@/components/home/Navbar";
-
-const degreeEnum = [
-  "初中及以下",
-  "中专",
-  "高中",
-  "大专",
-  "本科",
-  "硕士",
-  "博士",
-];
-const industryEnum = [
-  "互联网",
-  "金融",
-  "教育",
-  "医疗",
-  "制造业",
-  "零售",
-  "房地产",
-  "物流",
-  "媒体",
-  "广告",
-  "政府/非营利组织",
-  "其他",
-];
-const educationSchema = z.object({
-  school: z
-    .string()
-    .min(2, "学校至少需要2个字符")
-    .max(10, "学校不能超过10个字符"),
-  major: z
-    .string()
-    .min(2, "专业至少需要2个字符")
-    .max(10, "专业不能超过10个字符"),
-  degree: z.enum(degreeEnum, {
-    message: "请选择学历",
-  }),
-  startDate: z.string().min(1, "请选择开始时间"),
-  endDate: z.string().min(1, "请选择结束时间"),
-});
-const workExperienceSchema = z.object({
-  company: z
-    .string()
-    .min(2, "公司名称至少需要2个字符")
-    .max(20, "公司名称不能超过20个字符"),
-  position: z
-    .string()
-    .min(2, "职位名称至少需要2个字符")
-    .max(10, "职位名称不能超过10个字符"),
-  industry: z.enum(industryEnum, {
-    message: "请选择所属行业",
-  }),
-  startDate: z.string().min(1, "请选择开始时间"),
-  endDate: z.string().min(1, "请选择结束时间"),
-  description: z
-    .string()
-    .min(10, "工作内容至少需要10个字符")
-    .max(500, "工作内容不能超过500个字符"),
-});
-
-const profileSchema = z.object({
-  realName: z
-    .string()
-    .min(2, "姓名至少需要2个字符")
-    .max(4, "姓名不能超过4个字符")
-    .regex(/^[\u4e00-\u9fa5]+$/, "姓名只能包含中文汉字"),
-  gender: z.enum(["男", "女"], {
-    message: "请选择性别",
-  }),
-  phone: z.string().min(11, "请输入正确的手机号"),
-  email: z.string().email("请输入正确的邮箱"),
-  workYears: z
-    .number("请输入数字")
-    .int("必须为整数")
-    .min(0, "工作年限不能小于0")
-    .max(100, "工作年限不能大于100"),
-  job: z.string().min(2, "岗位至少需要2个字符").max(10, "岗位不能超过10个字符"),
-  educations: z.array(educationSchema).min(1, "请添加至少1条教育经历"),
-  workExperiences: z.array(workExperienceSchema).min(1, "请添加至少1条工作经历"),
-});
-type ProfileFormData = z.infer<typeof profileSchema>;
+import { getSession } from "next-auth/react";
 
 const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-    setError,
+  const { 
+    register, 
+    control, 
+    handleSubmit, 
+    formState: { errors }, 
+    setError, 
+    reset 
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -138,12 +60,66 @@ const Profile = () => {
     name: "workExperiences",
   });
 
+  // 在组件加载时查询用户信息
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // 检查用户是否已登录
+        const session = await getSession();
+        if (!session) return;
+        
+        // 调用API获取用户信息
+        const response = await fetch('/api/profile');
+        
+        if (response.ok) {
+          const profileData = await response.json();
+          
+          // 如果有用户信息，回显到表单
+          if (Object.keys(profileData).length > 0) {
+            // 使用react-hook-form的reset方法设置表单数据
+            reset(profileData);
+          }
+        } else {
+          const errorData = await response.json();
+          console.error('获取用户信息失败:', errorData.error || '未知错误');
+        }
+      } catch (error) {
+        console.error('获取用户信息失败:', error);
+      }
+    };
+    
+    fetchUserProfile();
+  }, [reset]);
+  
+  // 提交表单数据到API
   const onSubmit = async (data: ProfileFormData) => {
-    console.log("onSubmit", data);
     setIsLoading(true);
-    setTimeout(() => {
+    
+    try {
+      // 调用API保存用户信息
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('保存成功:', result);
+        // 这里可以添加成功提示
+      } else {
+        const errorData = await response.json();
+        console.error('保存失败:', errorData.error || '未知错误');
+        // 这里可以添加错误提示
+      }
+    } catch (error) {
+      console.error('保存用户信息时发生错误:', error);
+      // 这里可以添加网络错误提示
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   return (
