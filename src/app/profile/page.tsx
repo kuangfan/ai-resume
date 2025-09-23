@@ -3,19 +3,24 @@
 import { useState, useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { profileSchema, ProfileFormData, degreeEnum, industryEnum } from "@/schema/profile";
+import {
+  profileSchema,
+  ProfileFormData,
+  degreeEnum,
+  industryEnum,
+} from "@/schema/profile";
 import Navbar from "@/components/home/Navbar";
 import { getSession } from "next-auth/react";
 
 const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { 
-    register, 
-    control, 
-    handleSubmit, 
-    formState: { errors }, 
-    setError, 
-    reset 
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    reset,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -50,11 +55,11 @@ const Profile = () => {
     control,
     name: "educations",
   });
-  
-  const { 
-    fields: workExperienceFields, 
-    append: appendWorkExperience, 
-    remove: removeWorkExperience 
+
+  const {
+    fields: workExperienceFields,
+    append: appendWorkExperience,
+    remove: removeWorkExperience,
   } = useFieldArray({
     control,
     name: "workExperiences",
@@ -67,55 +72,58 @@ const Profile = () => {
         // 检查用户是否已登录
         const session = await getSession();
         if (!session) return;
-        
+
         // 调用API获取用户信息
-        const response = await fetch('/api/profile');
-        
+        const response = await fetch("/api/profile");
+
         if (response.ok) {
           const profileData = await response.json();
-          
+          console.log("获取到的用户信息:", profileData);
+
           // 如果有用户信息，回显到表单
           if (Object.keys(profileData).length > 0) {
+            profileData.educations = profileData.Education || [];
+            profileData.workExperiences = profileData.WorkExperience || [];
             // 使用react-hook-form的reset方法设置表单数据
             reset(profileData);
           }
         } else {
           const errorData = await response.json();
-          console.error('获取用户信息失败:', errorData.error || '未知错误');
+          console.error("获取用户信息失败:", errorData.error || "未知错误");
         }
       } catch (error) {
-        console.error('获取用户信息失败:', error);
+        console.error("获取用户信息失败:", error);
       }
     };
-    
+
     fetchUserProfile();
   }, [reset]);
-  
+
   // 提交表单数据到API
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);
-    
+
     try {
       // 调用API保存用户信息
-      const response = await fetch('/api/profile', {
-        method: 'POST',
+      const response = await fetch("/api/profile", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
-      
+
       if (response.ok) {
         const result = await response.json();
-        console.log('保存成功:', result);
+        console.log("保存成功:", result);
         // 这里可以添加成功提示
       } else {
         const errorData = await response.json();
-        console.error('保存失败:', errorData.error || '未知错误');
+        console.error("保存失败:", errorData.error || "未知错误");
         // 这里可以添加错误提示
       }
     } catch (error) {
-      console.error('保存用户信息时发生错误:', error);
+      console.error("保存用户信息时发生错误:", error);
       // 这里可以添加网络错误提示
     } finally {
       setIsLoading(false);
@@ -415,9 +423,7 @@ const Profile = () => {
                   className="grid grid-cols-1 md:grid-cols-2 gap-6 relative"
                 >
                   <div>
-                    <label
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       公司名称
                     </label>
                     <input
@@ -433,9 +439,7 @@ const Profile = () => {
                     )}
                   </div>
                   <div>
-                    <label
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       职位名称
                     </label>
                     <input
@@ -451,9 +455,7 @@ const Profile = () => {
                     )}
                   </div>
                   <div>
-                    <label
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       所属行业
                     </label>
                     <select
@@ -499,9 +501,7 @@ const Profile = () => {
                     )}
                   </div>
                   <div className="md:col-span-2">
-                    <label
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       工作内容
                     </label>
                     <textarea
@@ -529,7 +529,7 @@ const Profile = () => {
                 </div>
               ))}
             </div>
-            
+
             <button
               type="submit"
               disabled={isLoading}

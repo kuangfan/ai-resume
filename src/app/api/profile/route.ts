@@ -12,15 +12,11 @@ export async function GET() {
     if (!session?.user?.id) {
       return NextResponse.json({ error: '未授权' }, { status: 401 });
     }
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+    const user = await prisma.userProfile.findUnique({
+      where: { userId: session.user.id },
       include: {
-        UserProfile: {
-          include: {
-            Education: true,
-            WorkExperience: true,
-          }
-        }
+        Education: true,
+        WorkExperience: true,
       }
     });
     console.log('user', user);
