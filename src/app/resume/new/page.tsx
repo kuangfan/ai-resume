@@ -1,20 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdEditor, ExposeParam } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
-import { getSession } from "next-auth/react";
+import { toast } from "sonner";
+import "@/template/junior-theme.css";
 
 const Resume = () => {
   const router = useRouter();
   const [title, setTitle] = useState("未命名简历");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [editorHeight, setEditorHeight] = useState(0);
   const topRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<ExposeParam>(null);
+  const [templateType, setTemplateType] = useState("junior");
 
   useEffect(() => {
     const topEl = topRef.current;
@@ -24,33 +26,6 @@ const Resume = () => {
     setEditorHeight(windowHeight - topEl.clientHeight);
   }, []);
 
-  const fetchUserProfile = async () => {
-    try {
-      // 检查用户是否已登录
-      const session = await getSession();
-      if (!session) return;
-
-      // 调用API获取用户信息
-      const response = await fetch("/api/profile");
-
-      if (response.ok) {
-        const profileData = await response.json();
-        console.log("获取到的用户信息:", profileData);
-
-        // 如果有用户信息，回显到表单
-        if (Object.keys(profileData).length > 0) {
-          profileData.educations = profileData.Education || [];
-          profileData.workExperiences = profileData.WorkExperience || [];
-        }
-      } else {
-        const errorData = await response.json();
-        console.error("获取用户信息失败:", errorData.error || "未知错误");
-      }
-    } catch (error) {
-      console.error("获取用户信息失败:", error);
-    }
-  };
-
   const aiGenerate = async () => {
     try {
       setLoading(true);
@@ -58,16 +33,75 @@ const Resume = () => {
 
       const res = await fetch("/api/profile");
       if (!res.ok) {
-        alert(`获取用户信息失败: ${res.status}`);
+        toast.error(`获取用户信息失败: ${res.status}`);
         return;
       }
 
       const profileData = await res.json();
-      console.log("profileData", profileData);
       if (!profileData || Object.keys(profileData).length <= 0) {
-        alert("请先完善个人信息，以便AI更好的生成简历");
+        toast.error("请先完善个人信息，以便AI更好的生成简历");
         return;
       }
+      profileData.educations = profileData?.Education || [];
+      profileData.workExperiences = profileData?.WorkExperience || [];
+
+      console.log("profileData", Object.keys(profileData));
+      const workYears = profileData.workYears;
+      let template = null;
+
+      try {
+        // 通过API获取模板内容，而不是直接导入
+        const response = await fetch(`/api/template?workYears=${workYears}`);
+        if (!response.ok) {
+          throw new Error(`API请求失败: ${response.status}`);
+        }
+
+        template = await response.json();
+        console.log(
+          "获取的模板内容:",
+          template.content.substring(0, 50) + "..."
+        );
+        console.log("使用的模板类型:", template.templateType);
+
+        setTemplateType(template.templateType);
+        toast.success("模板加载成功");
+      } catch (templateError) {
+        console.error("加载模板失败:", templateError);
+        toast.error("加载模板失败，请稍后重试");
+        return;
+      }
+
+      // 整理用户信息为格式化文本
+      const formattedUserInfo = `个人信息如下：
+        姓名：${profileData.realName}
+        性别：${profileData.gender}
+        手机号：${profileData.phone}
+        邮箱：${profileData.email}
+        工作年限：${profileData.workYears}年
+        求职岗位：${profileData.job}
+
+        教育经历：
+        ${
+          profileData.educations
+            ?.map(
+              (edu: any) => `  - ${edu.school} ${edu.major} ${edu.degree}
+            时间：${edu.startDate} - ${edu.endDate}`
+            )
+            .join("\n") || "无"
+        }
+
+        工作经历：
+        ${
+          profileData.workExperiences
+            ?.map(
+              (exp: any) => `  - ${exp.company} ${exp.position} ${exp.industry}
+            时间：${exp.startDate} - ${exp.endDate}
+            工作内容：${exp.description}`
+            )
+            .join("\n") || "无"
+        }`;
+
+      console.log("整理后的用户信息:", formattedUserInfo);
 
       const response = await fetch("/api/ai", {
         method: "POST",
@@ -75,19 +109,27 @@ const Resume = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          prompt: "帮我生成一份计算机校招生的简历，排版要好看",
+          messages: [
+            {
+              role: "assistant",
+              content: `使用如下模板进行创作：${template.content}`,
+            },
+            { role: "user", content: formattedUserInfo },
+          ],
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`请求失败: ${response.status}`);
+        toast.error(`请求失败: ${response.status}`);
+        return;
       }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
 
       if (!reader) {
-        throw new Error("无法获取响应流");
+        toast.error("无法获取响应流");
+        return;
       }
 
       let accumulatedText = "";
@@ -118,7 +160,7 @@ const Resume = () => {
 
                 // 检查是否是结束标志
                 if (data.done === true) {
-                  console.log("收到结束标志，生成完成");
+                  toast.success("简历生成完成");
                   isDone = true;
                   break;
                 }
@@ -149,7 +191,7 @@ const Resume = () => {
       console.log("流式响应处理完成，最终内容长度:", accumulatedText.length);
     } catch (err) {
       console.error("AI生成失败", err);
-      setValue("AI生成失败，请稍后重试。");
+      toast.error("AI生成失败，请稍后重试。");
     } finally {
       setLoading(false);
     }
@@ -166,8 +208,6 @@ const Resume = () => {
 
   const addResume = async (title: string, content: string, html: string) => {
     try {
-      setError(null);
-
       const response = await fetch("/api/resumes", {
         method: "POST",
         headers: {
@@ -182,14 +222,14 @@ const Resume = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "创建失败");
+        toast.error(data.error || "创建失败");
       }
 
       const newResume = await response.json();
       console.log("newResume", newResume.id);
       router.push(`/resume`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "创建失败");
+      toast.error(err instanceof Error ? err.message : "创建简历失败");
     }
   };
 
@@ -265,6 +305,7 @@ const Resume = () => {
           "table",
           "=",
         ]}
+        previewTheme={templateType}
       ></MdEditor>
     </div>
   );

@@ -39,7 +39,7 @@ model UserProfile {
   realName    String @db.VarChar(4)
   gender      String @db.VarChar(1)
   phone       String @db.VarChar(11)
-  email       String @unique
+  email       String
   workYears   Int
   job         String @db.VarChar(10)
   createdAt   DateTime @default(now())

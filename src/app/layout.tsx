@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import AuthProvider from "@/components/providers/AuthProvider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "AI生成简历",
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body className="bg-gray-50 text-gray-800">
         <AuthProvider>{children}</AuthProvider>
+        <Toaster position="top-center" />
       </body>
     </html>
   );
