@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   // 定义公开路由
   const publicPaths = ['/', '/login', '/register'];
   const isPublicPath = publicPaths.includes(pathname);
-  const isAuthPath = pathname.startsWith('/api/auth');
+  const isAuthPath = pathname.startsWith('/api/auth') || pathname === '/api/register';
   const isStaticPath = pathname.startsWith('/_next') || pathname.includes('.');
 
   // 跳过验证的路径

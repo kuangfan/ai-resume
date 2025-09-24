@@ -1,12 +1,24 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 import { MdEditor, ExposeParam } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
-import { getSession } from "next-auth/react";
 
-const Resume = () => {
+interface Resume {
+  id: string;
+  title: string;
+  template: string;
+  content: string;
+  html: string;
+  createdAt: string;
+  updatedAt: string;
+}
+interface ResumePageProps {
+  params: Promise<{ id: string }>;
+}
+
+const Resume = ({ params }: ResumePageProps) => {
   const router = useRouter();
   const [title, setTitle] = useState("未命名简历");
   const [value, setValue] = useState("");
@@ -15,6 +27,7 @@ const Resume = () => {
   const [editorHeight, setEditorHeight] = useState(0);
   const topRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<ExposeParam>(null);
+  const [resumeId, setResumeId] = useState<string | null>(null);
 
   useEffect(() => {
     const topEl = topRef.current;
@@ -22,52 +35,55 @@ const Resume = () => {
     const windowHeight = window.innerHeight;
     console.log(windowHeight, topEl.clientHeight);
     setEditorHeight(windowHeight - topEl.clientHeight);
-  }, []);
 
-  const fetchUserProfile = async () => {
-    try {
-      // 检查用户是否已登录
-      const session = await getSession();
-      if (!session) return;
-
-      // 调用API获取用户信息
-      const response = await fetch("/api/profile");
-
-      if (response.ok) {
-        const profileData = await response.json();
-        console.log("获取到的用户信息:", profileData);
-
-        // 如果有用户信息，回显到表单
-        if (Object.keys(profileData).length > 0) {
-          profileData.educations = profileData.Education || [];
-          profileData.workExperiences = profileData.WorkExperience || [];
-        }
-      } else {
-        const errorData = await response.json();
-        console.error("获取用户信息失败:", errorData.error || "未知错误");
+    const loadParams = async () => {
+      try {
+        const resolvedParams = await params;
+        setResumeId(resolvedParams.id);
+      } catch (err) {
+        setError('参数加载失败');
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("获取用户信息失败:", error);
-    }
-  };
+    };
+    loadParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!resumeId) return;
+
+    const fetchResume = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/resumes/${resumeId}`);
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('简历不存在');
+          } else if (response.status === 401) {
+            throw new Error('未授权');
+          } else {
+            throw new Error(`请求失败: ${response.status}`);
+          }
+        }
+
+        const resumeData: Resume = await response.json();
+        setTitle(resumeData.title);
+        setValue(resumeData.content);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '加载简历失败');
+        setLoading(false);
+      }
+    };
+
+    fetchResume();
+  }, [resumeId]);
+
 
   const aiGenerate = async () => {
     try {
       setLoading(true);
       setValue(""); // 清空编辑器内容准备接收新内容
-
-      const res = await fetch("/api/profile");
-      if (!res.ok) {
-        alert(`获取用户信息失败: ${res.status}`);
-        return;
-      }
-
-      const profileData = await res.json();
-      console.log("profileData", profileData);
-      if (!profileData || Object.keys(profileData).length <= 0) {
-        alert("请先完善个人信息，以便AI更好的生成简历");
-        return;
-      }
 
       const response = await fetch("/api/ai", {
         method: "POST",
@@ -160,18 +176,17 @@ const Resume = () => {
 
     h.then((html) => {
       console.log(html);
-      addResume(title, v, html);
+      updateResume(title, v, html);
     });
   };
 
-  const addResume = async (title: string, content: string, html: string) => {
+  const updateResume = async (title: string, content: string, html: string) => {
     try {
       setError(null);
-
-      const response = await fetch("/api/resumes", {
-        method: "POST",
+      const response = await fetch(`/api/resumes/${resumeId}`, {
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title: title.trim(),
@@ -182,16 +197,16 @@ const Resume = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "创建失败");
+        throw new Error(data.error || '更新失败');
       }
 
-      const newResume = await response.json();
-      console.log("newResume", newResume.id);
+      const updatedResume = await response.json();
+      console.log('updatedResume', updatedResume.id)
       router.push(`/resume`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "创建失败");
+      setError(err instanceof Error ? err.message : '更新失败');
     }
-  };
+  }
 
   return (
     <div className="bg-white shadow-lg overflow-hidden min-h-screen">

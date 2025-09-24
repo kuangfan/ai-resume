@@ -42,7 +42,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/resume");
     } catch (error) {
       console.error("登录失败:", error);
       setError("root", { message: "登录失败，请稍后重试" });
