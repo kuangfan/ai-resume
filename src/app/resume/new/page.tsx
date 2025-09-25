@@ -111,10 +111,9 @@ const Resume = () => {
         body: JSON.stringify({
           messages: [
             {
-              role: "assistant",
-              content: `使用如下模板进行创作：${template.content}`,
-            },
-            { role: "user", content: formattedUserInfo },
+              role: "user",
+              content: `请严格按照以下模板结构和格式，使用提供的个人信息生成一份专业的简历。确保保留模板的所有部分和格式，同时用个人信息填充和优化内容。\n\n模板：\n${template.content}\n\n个人信息：\n${formattedUserInfo}`
+            }
           ],
         }),
       });
@@ -235,7 +234,7 @@ const Resume = () => {
 
   return (
     <div className="bg-white shadow-lg overflow-hidden min-h-screen">
-      <div ref={topRef}>
+      <div ref={topRef} className="no-print">
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 text-white">
           <h2 className="text-2xl font-semibold">简历制作</h2>
           <p className="text-sm mt-2">
