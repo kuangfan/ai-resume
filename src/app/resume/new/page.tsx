@@ -274,8 +274,103 @@ const Resume = () => {
             <button
               className="px-3 py-2 bg-white cursor-pointer text-indigo-900 font-semibold rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 hover:bg-opacity-95"
               onClick={() => {
-                // 导出PDF的简单实现，实际项目中可能需要更复杂的PDF生成逻辑
-                window.print();
+                // 只导出预览区域内容到PDF
+                const previewElement = document.querySelector('.md-editor-preview');
+                if (previewElement) {
+                  // 创建一个新窗口
+                  const printWindow = window.open('', '_blank');
+                  if (printWindow) {
+                    // 实际代码中这里不需要，因为templateType是组件的state变量，会在运行时正确获取
+                    
+                    // 创建打印样式，包含模板主题样式
+                    // 注意：这里不使用模板字符串中的变量，而是直接在下面的previewContent中添加类名
+                    const printStyle = `
+                      <style>
+                        /* 基础样式 */
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; margin: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        .md-editor-preview { max-width: 800px; margin: 0 auto; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        
+                        /* 初级简历模板样式 */
+                        .md-editor-preview h1, .junior h1 {
+                          font-size: 24px; font-weight: 600; text-align: center;
+                          margin-top: 20px; margin-bottom: 20px; color: #000;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview p, .junior p {
+                          font-size: 16px; line-height: 1.5; color: #333;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview p[data-line="1"], .junior p[data-line="1"] {
+                          text-align: center;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview h2, .junior h2 {
+                          background-color: #2c7be5; color: #fff; padding: 8px 15px;
+                          margin: 20px 0 15px 0; border-radius: 3px;
+                          font-weight: 600; font-size: 18px;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview h3, .junior h3 {
+                          font-size: 18px; font-weight: 600; margin-top: 20px;
+                          margin-bottom: 10px; color: #2c7be5;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview h3 + p, .junior h3 + p {
+                          font-size: 16px; color: #555; margin: 5px 0;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview p em, .junior p em {
+                          font-size: 14px; font-style: normal; color: #777;
+                          margin-bottom: 8px;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview ul, .junior ul {
+                          margin-top: 10px; margin-bottom: 10px;
+                          list-style-type: none; padding-left: 5px;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview li, .junior li {
+                          font-size: 16px; color: #333; position: relative;
+                          padding-left: 20px; margin-bottom: 8px;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                        .md-editor-preview li::before, .junior li::before {
+                          content: "•"; position: absolute; left: 0;
+                          color: #2c7be5; font-weight: bold;
+                          -webkit-print-color-adjust: exact;
+                          print-color-adjust: exact;
+                        }
+                      </style>
+                    `;
+                    
+                    // 获取预览区域的HTML内容，并为根元素添加模板类型的类名
+                    const previewContent = `<div class="md-editor-preview ${templateType}">${previewElement.innerHTML}</div>`;
+                    
+                    // 将内容写入新窗口
+                    printWindow.document.write(`<html><head>${printStyle}</head><body>${previewContent}</body></html>`);
+                    printWindow.document.close();
+                    
+                    // 等待新窗口内容加载完成后执行打印
+                    printWindow.onload = function() {
+                      printWindow.print();
+                      // 打印对话框关闭后关闭新窗口
+                      setTimeout(() => {
+                        printWindow.close();
+                      }, 100);
+                    };
+                  }
+                } else {
+                  toast.error('找不到预览区域，请确保简历已生成');
+                }
               }}
             >
               📤 导出
