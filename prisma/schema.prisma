@@ -87,6 +87,7 @@ model Resume {
   title     String   @db.VarChar(255)
   content   String   @db.LongText
   html      String   @db.LongText
+  templateType String @db.VarChar(20) @default("junior")
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   

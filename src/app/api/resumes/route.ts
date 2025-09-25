@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
           title: true,
           content: true,
           html: true,
+          templateType: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '未授权' }, { status: 401 });
     }
 
-    const { title, content } = await request.json();
+    const { title, content, html, templateType } = await request.json();
     
     if (!title?.trim() || !content?.trim()) {
       return NextResponse.json({ error: '标题和内容不能为空' }, { status: 400 });
@@ -73,7 +74,8 @@ export async function POST(request: NextRequest) {
       data: {
         title: title.trim(),
         content: content.trim(),
-        html: content.trim(),
+        html: html.trim(),
+        templateType: templateType || 'junior',
         userId: session.user.id,
       },
       select: {
@@ -81,6 +83,7 @@ export async function POST(request: NextRequest) {
         title: true,
         content: true,
         html: true,
+        templateType: true,
         createdAt: true,
         updatedAt: true,
       },

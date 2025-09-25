@@ -7,6 +7,8 @@ import { MdEditor, ExposeParam } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import { toast } from "sonner";
 import "@/template/junior-theme.css";
+import "@/template/senior-theme.css";
+import "@/template/experienced-theme.css";
 
 interface Resume {
   id: string;
@@ -14,6 +16,7 @@ interface Resume {
   template: string;
   content: string;
   html: string;
+  templateType: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -72,6 +75,7 @@ const Resume = ({ params }: ResumePageProps) => {
         const resumeData: Resume = await response.json();
         setTitle(resumeData.title);
         setValue(resumeData.content);
+        setTemplateType(resumeData.templateType);
         setLoading(false);
       } catch (err) {
         toast.error(err instanceof Error ? err.message : '加载简历失败');
@@ -280,6 +284,7 @@ const Resume = ({ params }: ResumePageProps) => {
           title: title.trim(),
           content: content.trim(),
           html: html.trim(),
+          templateType: templateType,
         }),
       });
 

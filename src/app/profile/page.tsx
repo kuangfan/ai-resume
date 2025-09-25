@@ -11,6 +11,7 @@ import {
 } from "@/schema/profile";
 import Navbar from "@/components/home/Navbar";
 import { getSession } from "next-auth/react";
+import { toast } from "sonner";
 
 const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -114,16 +115,15 @@ const Profile = () => {
       });
 
       if (response.ok) {
-        const result = await response.json();
-        console.log("保存成功:", result);
+        toast.success("保存成功");
         // 这里可以添加成功提示
       } else {
         const errorData = await response.json();
-        console.error("保存失败:", errorData.error || "未知错误");
+        toast.error(errorData.error || "未知错误");
         // 这里可以添加错误提示
       }
     } catch (error) {
-      console.error("保存用户信息时发生错误:", error);
+      toast.error("保存用户信息时发生错误");
       // 这里可以添加网络错误提示
     } finally {
       setIsLoading(false);

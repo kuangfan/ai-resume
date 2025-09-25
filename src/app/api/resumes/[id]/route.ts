@@ -26,6 +26,7 @@ export async function GET(
         title: true,
         content: true,
         html: true,
+        templateType: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -55,7 +56,7 @@ export async function PUT(
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
 
-    const { title, content, html } = await request.json();
+    const { title, content, html, templateType } = await request.json();
 
     if (!title?.trim() || !content?.trim()) {
       return NextResponse.json(
@@ -85,12 +86,14 @@ export async function PUT(
         title: title.trim(),
         content: content.trim(),
         html: html.trim(),
+        templateType: templateType || existingResume.templateType,
       },
       select: {
         id: true,
         title: true,
         content: true,
         html: true,
+        templateType: true,
         createdAt: true,
         updatedAt: true,
       },

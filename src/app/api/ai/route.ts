@@ -9,6 +9,7 @@ const system = `
   4. 确保所有日期格式统一
   5. 注意时间的Markdown语法格式，前后要加下划线
   6. 尽可能的保证简历的完整性，没有提供的内容发挥你的创造力
+  7. 个人信息顶部有了，其他地方就不要再重复出现，其他信息也不要有重复的
 `
 
 export async function POST(request: NextRequest) {

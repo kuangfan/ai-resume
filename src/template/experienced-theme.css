@@ -1,0 +1,217 @@
+/* 高级资深简历主题样式 */
+.experienced-theme {
+  font-family: 'Helvetica Neue', Arial, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.7;
+  color: #2c3e50;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #ffffff;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme h1 {
+  font-size: 38px;
+  font-weight: 800;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #1a252f;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #1a252f, #2c3e50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #34495e;
+  margin-bottom: 12px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme p[data-line="1"] {
+  text-align: center;
+  font-size: 15px;
+  color: #5d6d7e;
+  margin-bottom: 25px;
+  font-weight: 500;
+  border-bottom: 1px solid #ecf0f1;
+  padding-bottom: 15px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme h2 {
+  background: linear-gradient(90deg, #1a252f, #2c3e50);
+  color: #ffffff;
+  padding: 14px 24px;
+  margin: 40px 0 25px -30px;
+  border-radius: 0 8px 8px 0;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: inline-block;
+  width: calc(100% + 30px);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  color: #1a252f;
+  border-bottom: 3px solid #3498db;
+  padding-bottom: 8px;
+  display: inline-block;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme h3 + p {
+  font-size: 17px;
+  color: #2c3e50;
+  margin: 10px 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  padding-left: 5px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme p em {
+  font-size: 15px;
+  font-style: normal;
+  color: #7f8c8d;
+  margin-bottom: 15px;
+  display: block;
+  font-style: italic;
+  padding-left: 10px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme ul {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  list-style-type: none;
+  padding-left: 10px;
+}
+
+.experienced-theme li {
+  font-size: 16px;
+  color: #34495e;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.experienced-theme li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #3498db;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+/* 子列表样式 */
+.experienced-theme li li {
+  font-size: 15px;
+  padding-left: 20px;
+  color: #5d6d7e;
+}
+
+.experienced-theme li li::before {
+  content: "•";
+  color: #f39c12;
+  font-size: 18px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .experienced-theme {
+    padding: 25px;
+    box-shadow: none;
+  }
+  
+  .experienced-theme h2 {
+    margin-left: -20px;
+    width: calc(100% + 20px);
+    padding: 12px 20px;
+  }
+}
+
+/* 强调项目和职责 */
+.experienced-theme strong {
+  color: #1a252f;
+  font-weight: 600;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 工作经历中的项目标题 */
+.experienced-theme h3 + p + strong {
+  font-size: 18px;
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  text-decoration: underline;
+  text-decoration-color: #3498db;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 专业概述区域 */
+.experienced-theme h2:first-of-type + p {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #2c3e50;
+  font-weight: 500;
+  background-color: #ecf0f1;
+  padding: 15px 20px;
+  border-left: 5px solid #3498db;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 25px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 关键成果的子列表 */
+.experienced-theme li ul {
+  margin-top: 8px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+}
+
+/* 技术专长部分的样式 */
+.experienced-theme h2:nth-of-type(4) + ul li strong {
+  color: #3498db;
+  min-width: 120px;
+  display: inline-block;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}

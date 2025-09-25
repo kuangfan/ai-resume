@@ -11,6 +11,7 @@ interface Resume {
   template: string;
   content: string;
   html: string;
+  templateType: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -145,12 +146,12 @@ const Resume = () => {
             <>
               <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center">
                 <div className="flex-1 grid grid-cols-12 gap-4">
-                  <div className="col-span-8 font-medium text-gray-700">
+                  <div className="col-span-5 font-medium text-gray-700">
                     简历名称
                   </div>
-                  {/* <div className="col-span-3 font-medium text-gray-700">
+                  <div className="col-span-3 font-medium text-gray-700">
                     模板
-                  </div> */}
+                  </div>
                   <div className="col-span-2 font-medium text-gray-700">
                     更新时间
                   </div>
@@ -166,7 +167,7 @@ const Resume = () => {
                     className="p-6 hover:bg-gray-50 transition"
                   >
                     <div className="flex-1 grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-8">
+                      <div className="col-span-5">
                         <div className="flex items-center">
                           <div className="h-12 w-12 min-w-12 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center mr-4">
                             <i className="fas fa-file-alt text-indigo-600 text-xl"></i>
@@ -181,11 +182,23 @@ const Resume = () => {
                           </div>
                         </div>
                       </div>
-                      {/* <div className="col-span-3">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
-                          现代简约
-                        </span>
-                      </div> */}
+                      <div className="col-span-3">
+                        {item.templateType === "junior" && (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                            校招模板
+                          </span>
+                        )}
+                        {item.templateType === "senior" && (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                            社招模板
+                          </span>
+                        )}
+                        {item.templateType === "experienced" && (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            资深模板
+                          </span>
+                        )}
+                      </div>
                       <div className="col-span-2 text-sm text-gray-500">
                         {new Date(item.updatedAt).toLocaleString("zh-CN")}
                       </div>

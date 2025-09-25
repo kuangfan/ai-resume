@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Resume` MODIFY `templateType` VARCHAR(10) NOT NULL DEFAULT 'junior';
