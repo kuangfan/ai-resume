@@ -443,6 +443,207 @@ const Resume = ({ params }: ResumePageProps) => {
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
+            
+            /* 高级简历模板样式 */
+            .senior h1 {
+              font-size: 26px;
+              font-weight: 700;
+              text-align: center;
+              margin-top: 20px;
+              margin-bottom: 20px;
+              color: #1e3a8a;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior p {
+              font-size: 16px;
+              line-height: 1.6;
+              color: #334155;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior p[data-line="1"] {
+              text-align: center;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior h2 {
+              background-color: #1e3a8a;
+              color: #fff;
+              padding: 10px 15px;
+              margin: 25px 0 15px 0;
+              border-radius: 4px;
+              font-weight: 700;
+              font-size: 19px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior h3 {
+              font-size: 18px;
+              font-weight: 600;
+              margin-top: 20px;
+              margin-bottom: 10px;
+              color: #1e3a8a;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior h3 + p {
+              font-size: 16px;
+              color: #475569;
+              margin: 5px 0;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior p em {
+              font-size: 14px;
+              font-style: normal;
+              color: #64748b;
+              margin-bottom: 8px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior ul {
+              margin-top: 10px;
+              margin-bottom: 10px;
+              list-style-type: none;
+              padding-left: 5px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior li {
+              font-size: 16px;
+              color: #334155;
+              position: relative;
+              padding-left: 20px;
+              margin-bottom: 8px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .senior li::before {
+              content: "•";
+              position: absolute;
+              left: 0;
+              color: #1e3a8a;
+              font-weight: bold;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            
+            /* 资深简历模板样式 */
+            .experienced h1 {
+              font-size: 28px;
+              font-weight: 700;
+              text-align: center;
+              margin-top: 20px;
+              margin-bottom: 20px;
+              color: #164e63;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced p {
+              font-size: 16px;
+              line-height: 1.6;
+              color: #0f172a;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced p[data-line="1"] {
+              text-align: center;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced h2 {
+              background-color: #164e63;
+              color: #fff;
+              padding: 10px 15px;
+              margin: 25px 0 15px 0;
+              border-radius: 4px;
+              font-weight: 700;
+              font-size: 20px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced h3 {
+              font-size: 19px;
+              font-weight: 600;
+              margin-top: 20px;
+              margin-bottom: 10px;
+              color: #164e63;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced h3 + p {
+              font-size: 16px;
+              color: #334155;
+              margin: 5px 0;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced p em {
+              font-size: 14px;
+              font-style: normal;
+              color: #64748b;
+              margin-bottom: 8px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced ul {
+              margin-top: 10px;
+              margin-bottom: 10px;
+              list-style-type: none;
+              padding-left: 5px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced li {
+              font-size: 16px;
+              color: #0f172a;
+              position: relative;
+              padding-left: 20px;
+              margin-bottom: 8px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .experienced li::before {
+              content: "•";
+              position: absolute;
+              left: 0;
+              color: #164e63;
+              font-weight: bold;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            
+            /* 为所有模板类型的子列表添加特殊样式 */
+            .junior li li,
+            .senior li li,
+            .experienced li li {
+              font-size: 15px;
+              padding-left: 20px;
+              color: #5d6d7e;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            
+            /* 为所有模板类型的子列表项目符号添加特殊样式 */
+            .junior li li::before,
+            .senior li li::before,
+            .experienced li li::before {
+              content: "•";
+              font-size: 18px;
+              color: #f59e0b;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            
+            /* 确保所有strong元素在打印时正确显示颜色 */
+            .junior strong,
+            .senior strong,
+            .experienced strong {
+              color: inherit;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
           }
         `;
         document.head.appendChild(printStyle);

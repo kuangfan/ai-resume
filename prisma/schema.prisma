@@ -14,22 +14,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Article     Article[]
   Resume Resume[]
   UserProfile UserProfile?
-}
-
-model Article {
-  id        String   @id @default(uuid())
-  title     String   @db.VarChar(255)
-  content   String   @db.LongText
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@index([userId])
 }
 
 model UserProfile {
