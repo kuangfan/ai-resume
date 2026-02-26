@@ -1,7 +1,0 @@
-POST http://localhost:3000/api/ai
-Content-Type: application/json
-Cookie: next-auth.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..5IAHuOkbHUlm1W5h.Nw19wyVrGrw3NB549OCCLMyDFOUOADSuRMjtkZmVGmI6AsG538VQSgcSXGrchm0vr9a8EYo_r_uAPiO3j1CpXzYtoYMEQQ7xNEJbnOQWFdmt2b9jWLjzTl2HMakTRbcXv6GiTKiwlTzqkuZQwcTatF4sDFWqLzbY6OpnyPbBNsSGU4saF5U5fUm4ehJy6sB_5sOfrg59SNs9IuCcv0UP4hJQfXBVydkSQtmEt5GGHUfiCWjM-JStiDzKguI.iQBpNblR2WGWRqKQWCp7PA; Path=/; Expires=Tue, 21 Oct 2025 02:35:56 GMT; HttpOnly; SameSite=Lax
-
-{
-  "prompt": "你好"
-}
